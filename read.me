@@ -1,0 +1,42 @@
+# Ovozli Ingliz Tili O'rgatuvchi Bot
+
+Faqat ovozli xabarlar orqali ishlaydigan Telegram bot. Foydalanuvchi ovozli xabar yuboradi (masalan "Salom, yaxshimisan?" ingliz tilida), bot Gemini AI orqali tushunadi va ovozli javob qaytaradi — xuddi jonli suhbatdoshdek, xatolarni yumshoq tuzatib boradi.
+
+## Qanday ishlaydi
+
+1. Foydalanuvchi voice message yuboradi
+2. Bot audio faylni Gemini 2.5 Flash ga to'g'ridan-to'g'ri yuboradi (STT alohida kerak emas — Gemini audio ni o'zi tushunadi)
+3. Gemini tutor sifatida javob matnini generatsiya qiladi (xatolarni tuzatadi, savol beradi, suhbatni davom ettiradi)
+4. Javob matni gTTS orqali ovozga aylantiriladi va foydalanuvchiga voice message qilib yuboriladi
+
+## Lokal ishga tushirish
+
+```bash
+pip install -r requirements.txt
+# ffmpeg o'rnatilgan bo'lishi kerak (pydub uchun):
+# Ubuntu: sudo apt install ffmpeg
+# Mac: brew install ffmpeg
+
+export BOT_TOKEN="sening_bot_tokening"
+export GEMINI_API_KEY="sening_gemini_api_keying"
+
+python bot.py
+```
+
+## Railway ga deploy qilish
+
+1. Bu papkani GitHub repo ga push qil
+2. Railway da "New Project" → "Deploy from GitHub repo"
+3. Railway avtomatik `nixpacks.toml` orqali ffmpeg ni o'rnatadi
+4. Environment Variables bo'limiga qo'sh:
+   - `BOT_TOKEN` — @BotFather dan olingan token
+   - `GEMINI_API_KEY` — Google AI Studio dan olingan key
+5. Deploy — tayyor
+
+## Keyingi qadamlar (kengaytirish uchun)
+
+- **Xatolar statistikasi**: har bir foydalanuvchining tez-tez qiladigan xatolarini SQLite/Postgres ga yozib borish, keyin haftalik hisobot chiqarish
+- **IELTS Part 1/2/3 rejimi**: `/start` da foydalanuvchi qaysi qismni mashq qilishni tanlasin, shunga mos savollar berilsin
+- **Premium tier**: bepul foydalanuvchiga kunига masalan 5 ta ovozli xabar, premium'da cheksiz
+- **Ovoz tanlash**: gTTS o'rniga ElevenLabs ishlatilsa, tabiiyroq va turli aksentli ovozlar bo'ladi (lekin pullik)
+- **To'g'ri transkript context**: hozir tarixda faqat "[voice message]" saqlanadi, agar to'liq transkriptni ham saqlab, keyingi promptga qo'shsang, bot suhbat mavzusini yanada yaxshi eslab qoladi

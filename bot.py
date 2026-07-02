@@ -1,6 +1,7 @@
 import asyncio
 import logging
 import os
+import subprocess
 import tempfile
 from collections import defaultdict
 
@@ -10,7 +11,6 @@ from aiogram.filters import CommandStart
 from google import genai
 from google.genai import types
 from gtts import gTTS
-from pydub import AudioSegment
 
 logging.basicConfig(level=logging.INFO)
 
@@ -77,8 +77,17 @@ def text_to_voice(text: str, output_path: str):
     tts = gTTS(text=text, lang="en")
     tts.save(mp3_path)
 
-    audio = AudioSegment.from_mp3(mp3_path)
-    audio.export(output_path, format="ogg", codec="libopus")
+    # ffmpeg orqali mp3 -> ogg/opus (pydub kerak emas, Python 3.13 bilan mos)
+    subprocess.run(
+        [
+            "ffmpeg", "-y", "-i", mp3_path,
+            "-c:a", "libopus", "-b:a", "64k",
+            output_path,
+        ],
+        check=True,
+        stdout=subprocess.DEVNULL,
+        stderr=subprocess.DEVNULL,
+    )
     os.remove(mp3_path)
 
 

@@ -11,6 +11,9 @@ from aiogram.filters import CommandStart
 from google import genai
 from google.genai import types
 from gtts import gTTS
+import imageio_ffmpeg
+
+FFMPEG_PATH = imageio_ffmpeg.get_ffmpeg_exe()
 
 logging.basicConfig(level=logging.INFO)
 
@@ -80,7 +83,7 @@ def text_to_voice(text: str, output_path: str):
     # ffmpeg orqali mp3 -> ogg/opus (pydub kerak emas, Python 3.13 bilan mos)
     subprocess.run(
         [
-            "ffmpeg", "-y", "-i", mp3_path,
+            FFMPEG_PATH, "-y", "-i", mp3_path,
             "-c:a", "libopus", "-b:a", "64k",
             output_path,
         ],
